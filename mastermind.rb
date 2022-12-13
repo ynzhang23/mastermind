@@ -33,32 +33,67 @@ class Codebreaker
     end
   end
 
-  def update_codebreaker
+  def update_codebreaker_board
     return " (#{@codebreaker_array[0]})  (#{@codebreaker_array[1]})  (#{@codebreaker_array[2]})  (#{@codebreaker_array[3]}) "
   end
 end
 
-class Answer
+class Codemaker
   include Colors
-  attr_reader :answer
+  attr_reader :code, :feedback_array
 
   def initialize
-    @answer = Colors::AVAILABLE_COLOR.sample(4)
+    @code = Colors::AVAILABLE_COLOR.sample(4)
+    @feedback_array = Array.new(4)
   end
 
-  def feedback(code)
-    
+  def give_feedback(guess_array)
+    temp_code_array = @code
+    # Condition: Position and Color are both correct
+    guess_array.each_with_index do |color, index|
+      if color == temp_code_array[index]
+        @feedback_array[index] = "*"
+        temp_code_array[index] = nil
+      end
+    end
+    # Condition: Color is included in the array
+    guess_array.each_with_index do |color, index|
+      if temp_code_array.include? color
+        @feedback_array[index] = "o"
+        # Remove the guessed color from the code to prevent duplication issue
+        temp_code_array[temp_code_array.index(color)] = nil
+      end
+    end
   end
+
+  def update_codemaker_board
+    return " (#{@feedback_array[0]})  (#{@feedback_array[1]})  (#{@feedback_array[2]})  (#{@feedback_array[3]}) "
+  end
+
 end
 
-# Generate code
-generated_code = Answer.new
-puts generated_code.answer
+# Print Title
+puts "
+███╗░░░███╗░█████╗░░██████╗████████╗███████╗██████╗░███╗░░░███╗██╗███╗░░██╗██████╗░
+████╗░████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗░████║██║████╗░██║██╔══██╗
+██╔████╔██║███████║╚█████╗░░░░██║░░░█████╗░░██████╔╝██╔████╔██║██║██╔██╗██║██║░░██║
+██║╚██╔╝██║██╔══██║░╚═══██╗░░░██║░░░██╔══╝░░██╔══██╗██║╚██╔╝██║██║██║╚████║██║░░██║
+██║░╚═╝░██║██║░░██║██████╔╝░░░██║░░░███████╗██║░░██║██║░╚═╝░██║██║██║░╚███║██████╔╝
+╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═════╝░░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝╚═╝╚═╝░░╚══╝╚═════╝░"
 
-# Codebreaker attempts
+# Generate code
+codemaker_board = Codemaker.new
+puts codemaker_board.code
+
+# Create Codebreaker
 codebreaker_board = Codebreaker.new
+
+# Codebreaker attempts and updates his guessed code
 codebreaker_board.get_guess
-puts codebreaker_board.codebreaker_array
+
+# Codemaker feedback according to codebreaker's guessed code
+codemaker_board.give_feedback(codebreaker_board.codebreaker_array)
 
 # 
-puts codebreaker_board.update_codebreaker + " || "
+puts '--------------------------------------------'
+puts codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
