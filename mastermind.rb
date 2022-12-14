@@ -34,6 +34,7 @@ class Codebreaker
   end
 
   def auto_guess(feedback_array)
+    @round_number += 1
     feedback_array.each_with_index do |value, index|
       # Guess randomly if no right positions OR no right colors
       if value == nil || value == "o"
@@ -52,7 +53,7 @@ end
 
 class Codemaker
   include Colors
-  attr_reader :code, :feedback_array
+  attr_accessor :code, :feedback_array
 
   def initialize
     @code = [Colors::AVAILABLE_COLOR.sample(), Colors::AVAILABLE_COLOR.sample(), Colors::AVAILABLE_COLOR.sample(), Colors::AVAILABLE_COLOR.sample()] 
@@ -123,8 +124,8 @@ puts "1: Codebreaker"
 puts "2: Codemaker"
 player_choice = gets.to_i
 
+# PLAYER CHOICE: CODEBREAKER
 if player_choice == 1
-  # PLAYER CHOICE: CODEBREAKER
   # Generate code
   codemaker_board = Codemaker.new
   puts codemaker_board.code
@@ -132,18 +133,37 @@ if player_choice == 1
   codebreaker_board = Codebreaker.new
   # Loop until code is correct
   until codemaker_board.feedback_array == ['*', '*', '*', '*'] do
-    # Exit the game if round has gone beyond 12
-
     # Codebreaker attempts and updates his guessed code
     codebreaker_board.get_guess
     # Codemaker feedback according to codebreaker's guessed code
     codemaker_board.give_feedback(codebreaker_board.codebreaker_array)
     # Output result of the input 
-    puts codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
-    # Reset feedback tray to empty
+    puts "Round #{codebreaker_board.round_number}: " + codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
+    # Exit the game if round has gone beyond 12
+    if codebreaker_board.round_number == 12
+      puts "
+      ██╗░░░██╗░█████╗░██╗░░░██╗  ██╗░░░░░░█████╗░░██████╗███████╗
+      ╚██╗░██╔╝██╔══██╗██║░░░██║  ██║░░░░░██╔══██╗██╔════╝██╔════╝
+      ░╚████╔╝░██║░░██║██║░░░██║  ██║░░░░░██║░░██║╚█████╗░█████╗░░
+      ░░╚██╔╝░░██║░░██║██║░░░██║  ██║░░░░░██║░░██║░╚═══██╗██╔══╝░░
+      ░░░██║░░░╚█████╔╝╚██████╔╝  ███████╗╚█████╔╝██████╔╝███████╗
+      ░░░╚═╝░░░░╚════╝░░╚═════╝░  ╚══════╝░╚════╝░╚═════╝░╚══════╝"
+      # This will stop the loop and end the program
+      codemaker_board.feedback_array = ['*', '*', '*', '*']
+    end
+    # Print the winning message if round is within 12
+    if codebreaker_board.round_number < 12
+      puts "
+      ██╗░░░██╗░█████╗░██╗░░░██╗  ░██╗░░░░░░░██╗██╗███╗░░██╗
+      ╚██╗░██╔╝██╔══██╗██║░░░██║  ░██║░░██╗░░██║██║████╗░██║
+      ░╚████╔╝░██║░░██║██║░░░██║  ░╚██╗████╗██╔╝██║██╔██╗██║
+      ░░╚██╔╝░░██║░░██║██║░░░██║  ░░████╔═████║░██║██║╚████║
+      ░░░██║░░░╚█████╔╝╚██████╔╝  ░░╚██╔╝░╚██╔╝░██║██║░╚███║
+      ░░░╚═╝░░░░╚════╝░░╚═════╝░  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚══╝"
+    end
   end
+# PLAYER CHOICE: CODEMAKER
 elsif player_choice == 2
-  # PLAYER CHOICE: CODEMAKER
   # Ask player for code
   codemaker_board = Codemaker.new
   codemaker_board.custom_code
@@ -151,14 +171,33 @@ elsif player_choice == 2
   codebreaker_board = Codebreaker.new
   # Loop until code is correct
   until codemaker_board.feedback_array == ['*', '*', '*', '*'] do
-    # Exit the game if round has gone beyond 12
-
     # Codebreaker attempts and updates his guessed code
     codebreaker_board.auto_guess(codemaker_board.feedback_array)
     # Codemaker auto feedback according to codebreaker's guessed code
     codemaker_board.give_feedback(codebreaker_board.codebreaker_array)
     # Output result of the input 
-    puts codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
-    # Reset feedback tray to empty
+    puts "Round #{codebreaker_board.round_number}: " + codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
+    # Exit the game if round has gone beyond 12
+    if codebreaker_board.round_number == 12
+      puts "
+      ██╗░░░██╗░█████╗░██╗░░░██╗  ░██╗░░░░░░░██╗██╗███╗░░██╗
+      ╚██╗░██╔╝██╔══██╗██║░░░██║  ░██║░░██╗░░██║██║████╗░██║
+      ░╚████╔╝░██║░░██║██║░░░██║  ░╚██╗████╗██╔╝██║██╔██╗██║
+      ░░╚██╔╝░░██║░░██║██║░░░██║  ░░████╔═████║░██║██║╚████║
+      ░░░██║░░░╚█████╔╝╚██████╔╝  ░░╚██╔╝░╚██╔╝░██║██║░╚███║
+      ░░░╚═╝░░░░╚════╝░░╚═════╝░  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚══╝"
+      # This will stop the loop and end the program
+      codemaker_board.feedback_array = ['*', '*', '*', '*']
+    end
   end
+    # Print the losing message if round is within 12
+    if codebreaker_board.round_number < 12
+      puts "
+      ██╗░░░██╗░█████╗░██╗░░░██╗  ██╗░░░░░░█████╗░░██████╗███████╗
+      ╚██╗░██╔╝██╔══██╗██║░░░██║  ██║░░░░░██╔══██╗██╔════╝██╔════╝
+      ░╚████╔╝░██║░░██║██║░░░██║  ██║░░░░░██║░░██║╚█████╗░█████╗░░
+      ░░╚██╔╝░░██║░░██║██║░░░██║  ██║░░░░░██║░░██║░╚═══██╗██╔══╝░░
+      ░░░██║░░░╚█████╔╝╚██████╔╝  ███████╗╚█████╔╝██████╔╝███████╗
+      ░░░╚═╝░░░░╚════╝░░╚═════╝░  ╚══════╝░╚════╝░╚═════╝░╚══════╝"
+    end
 end
