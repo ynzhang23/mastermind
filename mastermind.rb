@@ -33,6 +33,18 @@ class Codebreaker
     end
   end
 
+  def auto_guess(feedback_array)
+    feedback_array.each_with_index do |value, index|
+      # Guess randomly if no right positions OR no right colors
+      if value = nil || value = "o"
+        @codebreaker_array[index] = Colors::AVAILABLE_COLOR.sample()
+      # Retain the color if it is in the right position
+      elsif value = "*"
+        next
+      end
+    end
+  end
+
   def update_codebreaker_board
     return " (#{@codebreaker_array[0]})  (#{@codebreaker_array[1]})  (#{@codebreaker_array[2]})  (#{@codebreaker_array[3]}) "
   end
@@ -135,5 +147,17 @@ elsif player_choice == 2
   # Ask player for code
   codemaker_board = Codemaker.new
   codemaker_board.custom_code
-  # Computer Guess
+  # Loop until code is correct
+  until codemaker_board.feedback_array == ['*', '*', '*', '*'] do
+    # Exit the game if round has gone beyond 12
+
+    # Codebreaker attempts and updates his guessed code
+    codebreaker_board = Codebreaker.new
+    codebreaker_board.auto_guess(codemaker_board.feedback_array)
+    # Codemaker auto feedback according to codebreaker's guessed code
+    codemaker_board.give_feedback(codebreaker_board.codebreaker_array)
+    # Output result of the input 
+    puts codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
+    # Reset feedback tray to empty
+  end
 end
