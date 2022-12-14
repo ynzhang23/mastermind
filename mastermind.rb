@@ -43,27 +43,32 @@ class Codemaker
   attr_reader :code, :feedback_array
 
   def initialize
-    @code = Colors::AVAILABLE_COLOR.sample(4)
+    @code = [Colors::AVAILABLE_COLOR.sample(), Colors::AVAILABLE_COLOR.sample(), Colors::AVAILABLE_COLOR.sample(), Colors::AVAILABLE_COLOR.sample()] 
     @feedback_array = Array.new(4)
   end
 
   def give_feedback(guess_array)
-    temp_code_array = @code
+    # Create duplicate array for comparison to prevent original array from being altered
+    temp_code_array = @code.dup
+    temp_guess_array = guess_array.dup
+    temp_feedback_array = [nil, nil, nil, nil]
     # Condition: Position and Color are both correct
-    guess_array.each_with_index do |color, index|
+    temp_guess_array.each_with_index do |color, index|
       if color == temp_code_array[index]
-        @feedback_array[index] = "*"
+        temp_feedback_array[index] = "*"
         temp_code_array[index] = nil
+        temp_guess_array[index] = "guessed"
       end
     end
     # Condition: Color is included in the array
-    guess_array.each_with_index do |color, index|
+    temp_guess_array.each_with_index do |color, index|
       if temp_code_array.include? color
-        @feedback_array[index] = "o"
+        temp_feedback_array[index] = "o"
         # Remove the guessed color from the code to prevent duplication issue
         temp_code_array[temp_code_array.index(color)] = nil
       end
     end
+    @feedback_array = temp_feedback_array
   end
 
   def update_codemaker_board
@@ -80,6 +85,7 @@ puts "
 ██║╚██╔╝██║██╔══██║░╚═══██╗░░░██║░░░██╔══╝░░██╔══██╗██║╚██╔╝██║██║██║╚████║██║░░██║
 ██║░╚═╝░██║██║░░██║██████╔╝░░░██║░░░███████╗██║░░██║██║░╚═╝░██║██║██║░╚███║██████╔╝
 ╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═════╝░░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝╚═╝╚═╝░░╚══╝╚═════╝░"
+puts "---------------------------------------------------------------------------------"
 
 # Generate code
 codemaker_board = Codemaker.new
@@ -88,12 +94,13 @@ puts codemaker_board.code
 # Create Codebreaker
 codebreaker_board = Codebreaker.new
 
-# Codebreaker attempts and updates his guessed code
-codebreaker_board.get_guess
-
-# Codemaker feedback according to codebreaker's guessed code
-codemaker_board.give_feedback(codebreaker_board.codebreaker_array)
-
-# 
-puts '--------------------------------------------'
-puts codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
+# Loop until code is correct
+until codemaker_board.feedback_array == ['*', '*', '*', '*'] do
+  # Codebreaker attempts and updates his guessed code
+  codebreaker_board.get_guess
+  # Codemaker feedback according to codebreaker's guessed code
+  codemaker_board.give_feedback(codebreaker_board.codebreaker_array)
+  # Output result of the input 
+  puts codebreaker_board.update_codebreaker_board + " || " + codemaker_board.update_codemaker_board
+  # Reset feedback tray to empty
+end
