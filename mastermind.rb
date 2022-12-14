@@ -151,7 +151,7 @@ if player_choice == 1
       codemaker_board.feedback_array = ['*', '*', '*', '*']
     end
     # Print the winning message if round is within 12
-    if codebreaker_board.round_number < 12
+    if codebreaker_board.round_number < 12 && codemaker_board.feedback_array == ['*', '*', '*', '*']
       puts "
       ██╗░░░██╗░█████╗░██╗░░░██╗  ░██╗░░░░░░░██╗██╗███╗░░██╗
       ╚██╗░██╔╝██╔══██╗██║░░░██║  ░██║░░██╗░░██║██║████╗░██║
@@ -190,7 +190,7 @@ elsif player_choice == 2
     end
   end
     # Print the losing message if round is within 12
-    if codebreaker_board.round_number < 12
+    if codebreaker_board.round_number < 12 && codemaker_board.feedback_array == ['*', '*', '*', '*']
       puts "
       ░█████╗░░█████╗░███╗░░░███╗██████╗░██╗░░░██╗████████╗███████╗██████╗░  ░██╗░░░░░░░██╗██╗███╗░░██╗░██████╗
       ██╔══██╗██╔══██╗████╗░████║██╔══██╗██║░░░██║╚══██╔══╝██╔════╝██╔══██╗  ░██║░░██╗░░██║██║████╗░██║██╔════╝
