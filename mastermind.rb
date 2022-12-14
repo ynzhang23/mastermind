@@ -128,7 +128,6 @@ player_choice = gets.to_i
 if player_choice == 1
   # Generate code
   codemaker_board = Codemaker.new
-  puts codemaker_board.code
   # Create Codebreaker
   codebreaker_board = Codebreaker.new
   # Loop until code is correct
