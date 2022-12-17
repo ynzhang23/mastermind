@@ -1,5 +1,7 @@
 # Mastermind
 
+Try the game [here](https://replit.com/@ynzhang23/mastermind)
+
 ## Rules
 [Source](cardgamedatabase.fandom.com)
 
